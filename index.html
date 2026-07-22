@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HIE Calculator — Test</title>
+<title>HIE Calculator + aEEG — Test</title>
 <style>
   :root{
-    --gold:#FFCC66; --green:#91FAA3; --blue:#89D6FF; --dark:#191919;
+    --gold:#FFCC66; --green:#91FAA3; --blue:#89D6FF; --violet:#C9B6FF; --dark:#191919;
   }
   *{box-sizing:border-box;}
   body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#f2f2f2;color:#111;}
@@ -16,6 +16,7 @@
   .qual{background:var(--gold);}
   .critA{background:var(--green);}
   .critB{background:var(--blue);}
+  .aeeg{background:var(--violet);}
   .row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid #eee;font-size:15px;}
   .row span{flex:1;}
   /* iOS-style toggle */
@@ -27,6 +28,11 @@
   .g input:checked + .track{background:var(--gold);}
   .a input:checked + .track{background:var(--green);}
   .b input:checked + .track{background:var(--blue);}
+  /* aEEG radio rows */
+  .rrow{display:flex;align-items:center;gap:12px;padding:11px 16px;border-bottom:1px solid #eee;font-size:15px;cursor:pointer;}
+  .rrow input{accent-color:#7B4DFF;width:20px;height:20px;flex:0 0 auto;}
+  .rrow .tag{font-size:12px;color:#666;}
+  .hint{font-size:12px;color:#666;padding:8px 16px 0;}
   .submit{margin:16px;display:block;width:calc(100% - 32px);background:#000;color:#e6e6e6;border:none;border-radius:6px;padding:13px;font-size:19px;cursor:pointer;}
   .submit:active{opacity:.8;}
   /* modal */
@@ -83,8 +89,21 @@
   <div class="row"><span>Seizure</span>
     <label class="sw b"><input type="checkbox" id="seiz"><span class="track"><span class="knob"></span></span></label></div>
 
+  <div class="section aeeg">&nbsp;&nbsp;&nbsp;aEEG BACKGROUND</div>
+  <div class="hint">Select the aEEG background pattern.</div>
+  <label class="rrow"><input type="radio" name="aeeg" value="na" checked>
+    <span>Not recorded / not available<div class="tag">Result falls back to Criteria B alone</div></span></label>
+  <label class="rrow"><input type="radio" name="aeeg" value="cnv">
+    <span>Continuous normal voltage (CNV)<div class="tag">Normal background</div></span></label>
+  <label class="rrow"><input type="radio" name="aeeg" value="dnv">
+    <span>Discontinuous normal voltage (DNV)<div class="tag">Depressed background</div></span></label>
+  <label class="rrow"><input type="radio" name="aeeg" value="bs">
+    <span>Burst suppression (BS)<div class="tag">Depressed background</div></span></label>
+  <label class="rrow"><input type="radio" name="aeeg" value="lv">
+    <span>Low voltage<div class="tag">Depressed background</div></span></label>
+
   <button class="submit" onclick="submit()">Submit</button>
-  <div class="note">Web test replica of the HIE Calculator v1.5 logic — for previewing behavior only. Not for clinical use.</div>
+  <div class="note">Web test replica of the HIE Calculator v1.5 logic with a draft aEEG component — for review only. Not for clinical use.</div>
 </div>
 
 <div class="overlay" id="disclaimerOverlay">
@@ -106,10 +125,13 @@
 </div>
 
 <script>
-  const disclaimerText = "Please read the following disclaimer before proceeding with use of the HIE calculator Mobile Application.\n\nThe purpose of this Application is to make cooling criteria more accessible and easy to use. It DOES NOT replace clinical judgement and assessment.\n\nThis calculator is based on the American Academy of Pediatrics (AAP) clinical report: Zanelli SA, Wusthoff CJ, Lucke AM, Kaufman DA; Committee on Fetus and Newborn; Section on Neurology. Therapeutic Hypothermia for Neonatal Hypoxic-Ischemic Encephalopathy: Clinical Report. Pediatrics. 2026;157(2):e2025073627.\n\nBy using this Application you hereby waive any claims, causes of action and demands, whether in tort or contract, against the developer (including its employees, directors and agents) in any way related to use of the Application and the information derived from it.\n\nThe developer is not responsible for any decision made using this application.\n\nThe Application is provided as-is with no representations or warranties of any kind, express, statutory or implied, as to the operation of the Application, or the information, content, materials, or products included on the Application. To the fullest extent permissible by applicable law, the developer and its officers, directors, employees and contractors disclaim all warranties, express, statutory, or implied, including, but not limited to, implied warranties of merchantability, fitness for a particular purpose or non-infringement.\n\nThe developer does not warrant that all aspects of the Application will be available at any time or from any particular location, will be secure or error-free, that defects will be corrected, or that the Application is free of viruses or other potentially harmful components.\n\nI agree to the above Terms of Use for the HIE cooling calculator Application.";
+  const disclaimerText = "Please read the following disclaimer before proceeding with use of the HIE calculator Mobile Application.\n\nThe purpose of this Application is to make cooling criteria more accessible and easy to use. It DOES NOT replace clinical judgement and assessment.\n\nThis version includes a draft aEEG component that is under expert review and is not part of the released application.\n\nThis calculator is based on the American Academy of Pediatrics (AAP) clinical report: Zanelli SA, Wusthoff CJ, Lucke AM, Kaufman DA; Committee on Fetus and Newborn; Section on Neurology. Therapeutic Hypothermia for Neonatal Hypoxic-Ischemic Encephalopathy: Clinical Report. Pediatrics. 2026;157(2):e2025073627.\n\nBy using this Application you hereby waive any claims, causes of action and demands, whether in tort or contract, against the developer (including its employees, directors and agents) in any way related to use of the Application and the information derived from it.\n\nThe developer is not responsible for any decision made using this application.\n\nThe Application is provided as-is with no representations or warranties of any kind, express, statutory or implied, as to the operation of the Application, or the information, content, materials, or products included on the Application. To the fullest extent permissible by applicable law, the developer and its officers, directors, employees and contractors disclaim all warranties, express, statutory, or implied, including, but not limited to, implied warranties of merchantability, fitness for a particular purpose or non-infringement.\n\nThe developer does not warrant that all aspects of the Application will be available at any time or from any particular location, will be secure or error-free, that defects will be corrected, or that the Application is free of viruses or other potentially harmful components.\n\nI agree to the above Terms of Use for the HIE cooling calculator Application.";
 
   const gaStatement = "Therapeutic hypothermia is not recommended in infants born less than 35 weeks’ gestational age. There is limited evidence regarding the safety and effectiveness of therapeutic hypothermia for neonates born at 35 0/7 to 35 6/7 weeks’ gestation; it may be considered in discussion of potential risks and benefits with families.";
   const ageStatement = "Initiation of hypothermia between 6 and 24 hours after birth, in infants who did not initially meet criteria or were unable to have therapeutic hypothermia initiated in the first 6 hours after birth, may be considered after discussion with the parent or guardian of possible benefit and associated risk.";
+  const discussStatement = "The case should be discussed with a senior physician and, if possible, with the parents.";
+
+  const RED = '#cc0000', AMBER = '#d98c00', GREEN = '#008c26';
 
   const on = id => document.getElementById(id).checked;
 
@@ -124,10 +146,54 @@
     if(on('pupil')||on('brady')||on('apnea')) i++;
     return on('seiz') || i > 2;
   }
-  function meetsCoreCriteria(){ return metabolicMet() && encephalopathyMet(); }
-  function isYes(){ return on('ga') && on('six') && meetsCoreCriteria(); }
 
-  const RED = '#cc0000', AMBER = '#d98c00', GREEN = '#008c26';
+  // ---- aEEG ----
+  const AEEG_LABEL = {
+    na:'Not recorded', cnv:'Continuous normal voltage (CNV)',
+    dnv:'Discontinuous normal voltage (DNV)', bs:'Burst suppression (BS)', lv:'Low voltage'
+  };
+  function aeeg(){ return document.querySelector('input[name="aeeg"]:checked').value; }
+  function aeegKnown(){ return aeeg() !== 'na'; }
+  function aeegDepressed(){ return ['dnv','bs','lv'].includes(aeeg()); }
+
+  // Outcome ignoring the gestational-age / 6-hour gates.
+  // kind: 'qualify' | 'discuss' | 'noqualify'
+  function coreOutcome(){
+    const aMet = metabolicMet(), bMet = encephalopathyMet();
+    const known = aeegKnown(), dep = aeegDepressed();
+
+    if(!aMet){
+      return {kind:'noqualify', verdict:'DOES NOT QUALIFY', color:GREEN,
+        text:'Criteria A is not met, so the infant does not satisfy the criteria for therapeutic hypothermia.'};
+    }
+    if(!known){
+      if(bMet) return {kind:'qualify', verdict:'QUALIFIES FOR THERAPEUTIC HYPOTHERMIA', color:RED,
+        text:'Criteria A and Criteria B are met. No aEEG background was recorded, so the result is based on the clinical examination alone.'};
+      return {kind:'noqualify', verdict:'DOES NOT QUALIFY — REASSESS', color:AMBER,
+        text:'Criteria A is met but Criteria B is not. The infant does not currently qualify for therapeutic hypothermia. Serial neurological examinations are recommended to reassess for evolving encephalopathy.'};
+    }
+    if(dep && bMet){
+      return {kind:'qualify', verdict:'QUALIFIES FOR THERAPEUTIC HYPOTHERMIA', color:RED,
+        text:'A depressed aEEG background (' + AEEG_LABEL[aeeg()] + ') together with Criteria B qualifies the infant for therapeutic hypothermia.'};
+    }
+    if(!dep && bMet){
+      return {kind:'discuss', verdict:'DISCUSS WITH SENIOR PHYSICIAN', color:AMBER,
+        text:'Discrepancy: the aEEG background is continuous normal voltage (CNV) but Criteria B is fulfilled.\n\n' + discussStatement};
+    }
+    if(dep && !bMet){
+      return {kind:'discuss', verdict:'DISCUSS WITH SENIOR PHYSICIAN', color:AMBER,
+        text:'Discrepancy: the aEEG background is depressed (' + AEEG_LABEL[aeeg()] + ') but Criteria B is not fulfilled.\n\n' + discussStatement};
+    }
+    // CNV and Criteria B not met — concordant, no cooling
+    return {kind:'noqualify', verdict:'DOES NOT QUALIFY — REASSESS', color:AMBER,
+      text:'The aEEG background is continuous normal voltage (CNV) and Criteria B is not fulfilled. The infant does not currently qualify for therapeutic hypothermia. Serial neurological examinations are recommended to reassess for evolving encephalopathy.'};
+  }
+
+  function summary(){
+    return '\n\nCriteria A (metabolic / resuscitation): ' + (metabolicMet() ? 'met' : 'not met') +
+           '\nCriteria B (encephalopathy): ' + (encephalopathyMet() ? 'met' : 'not met') +
+           '\naEEG background: ' + AEEG_LABEL[aeeg()];
+  }
 
   function showAlert(title, msg, allowOverride, color, verdict){
     document.getElementById('alertTitle').textContent = title;
@@ -157,25 +223,24 @@
   }
 
   function submit(){
-    if(isYes()){
-      showAlert('Result','Satisfies criteria for therapeutic hypothermia. The qualifying criteria, Criteria A and Criteria B are all met.',
-                false, RED, 'QUALIFIES FOR THERAPEUTIC HYPOTHERMIA');
+    const gaOff = !on('ga'), ageOff = !on('six');
+    const o = coreOutcome();
+
+    // Gates satisfied — report the outcome directly.
+    if(!gaOff && !ageOff){
+      showAlert('Result', o.text + summary(), false, o.color, o.verdict);
       return;
     }
-    const gaOff = !on('ga'), ageOff = !on('six');
-    const aMet = metabolicMet(), bMet = encephalopathyMet();
-    const borderline = aMet && !bMet;
-    let verdict, color;
-    let txt = 'Does not satisfy criteria for therapeutic hypothermia.';
-    if(borderline){
-      verdict = 'DOES NOT QUALIFY — REASSESS'; color = AMBER;
-      txt += '\n\nCriteria A is met but Criteria B is not. The infant does not currently qualify for therapeutic hypothermia. Serial neurological examinations are recommended to reassess for evolving encephalopathy.';
-    } else {
-      verdict = 'DOES NOT QUALIFY'; color = GREEN;
-    }
+
+    // A gate failed.
+    let txt = 'Does not satisfy criteria for therapeutic hypothermia.\n\n' + o.text;
     if(gaOff) txt += '\n\nThe infant does not meet the gestational age criterion (≥ 36 weeks).\n\n' + gaStatement;
     if(ageOff) txt += '\n\nThe infant is more than 6 hours from birth.\n\n' + ageStatement;
-    showAlert('Result', txt, (gaOff || ageOff) && aMet && bMet, color, verdict);
+    txt += summary();
+
+    // Override only when the gate is the sole barrier (the infant would otherwise qualify).
+    const color = (o.kind === 'qualify') ? GREEN : o.color;
+    showAlert('Result', txt, o.kind === 'qualify', color, 'DOES NOT QUALIFY');
   }
 
   function overrideResult(){
@@ -183,25 +248,15 @@
     const reasons = [];
     if(gaOff) reasons.push('gestational age (< 36 weeks)');
     if(ageOff) reasons.push('age (> 6 hours from birth)');
-    const reasonText = reasons.join(' and ');
-    const aMet = metabolicMet(), bMet = encephalopathyMet();
-    let verdict, color, txt;
-    if(aMet && bMet){
-      verdict = 'QUALIFIES (CRITERIA A + B)'; color = RED;
-      txt = 'Based on Criteria A + B, the infant SATISFIES the criteria for therapeutic hypothermia.';
-    } else if(aMet && !bMet){
-      verdict = 'DOES NOT QUALIFY — REASSESS'; color = AMBER;
-      txt = 'Based on Criteria A + B, the infant does not currently satisfy the criteria. Criteria A is met but Criteria B is not; serial neurological examinations are recommended to reassess for evolving encephalopathy.';
-    } else {
-      verdict = 'DOES NOT QUALIFY (CRITERIA A + B)'; color = GREEN;
-      txt = 'Based on Criteria A + B, the infant DOES NOT satisfy the criteria for therapeutic hypothermia.';
-    }
-    txt += '\n\nCriteria A (metabolic / resuscitation): ' + (aMet ? 'met' : 'not met');
-    txt += '\nCriteria B (encephalopathy): ' + (bMet ? 'met' : 'not met');
-    txt += '\n\nThis override sets aside the ' + reasonText + ' criterion. Use clinical judgement together with the guidance below:';
+    const o = coreOutcome();
+
+    let txt = o.text + '\n\nThis override sets aside the ' + reasons.join(' and ') +
+              ' criterion. Use clinical judgement together with the guidance below:';
     if(gaOff) txt += '\n\n' + gaStatement;
     if(ageOff) txt += '\n\n' + ageStatement;
-    showAlert('Override', txt, false, color, verdict);
+    txt += summary();
+
+    showAlert('Override', txt, false, o.color, o.verdict);
   }
 
   // Show the disclaimer on launch, like the app does.
