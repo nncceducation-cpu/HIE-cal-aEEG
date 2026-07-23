@@ -16,7 +16,10 @@
   .qual{background:var(--gold);}
   .critA{background:var(--green);}
   .critB{background:var(--blue);}
-  .aeeg{background:var(--violet);}
+  .aeeg{background:var(--violet);cursor:pointer;user-select:none;}
+  #aeegCaret{display:inline-block;transition:transform .15s;font-size:13px;}
+  #aeegCaret.open{transform:rotate(90deg);}
+  .collapsed{display:none;}
   .row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid #eee;font-size:15px;}
   .row span{flex:1;}
   /* iOS-style toggle */
@@ -67,7 +70,7 @@
   <div class="row"><span>Is the baby ≤ 6 hours from birth</span>
     <label class="sw g"><input type="checkbox" id="six"><span class="track"><span class="knob"></span></span></label></div>
 
-  <div class="section critA">&nbsp;&nbsp;&nbsp;CRITERIA A</div>
+  <div class="section critA">&nbsp;&nbsp;(A) Evidence of peripartum hypoxia-ischemia</div>
   <div class="row"><span>Apgar ≤ 5 @ 10 minutes</span>
     <label class="sw a"><input type="checkbox" id="apgar"><span class="track"><span class="knob"></span></span></label></div>
   <div class="row"><span>Cord or first hour arterial gas base excess ≤ -16 mmol/L</span>
@@ -77,7 +80,7 @@
   <div class="row"><span>Cord or first hour arterial gas pH ≤ 7</span>
     <label class="sw a"><input type="checkbox" id="ph"><span class="track"><span class="knob"></span></span></label></div>
 
-  <div class="section critB">&nbsp;&nbsp;&nbsp;CRITERIA B</div>
+  <div class="section critB">&nbsp;&nbsp;(B) Evidence of Moderate-to-Severe Encephalopathy (clinical)</div>
   <div class="row"><span>Decreased level of consciousness</span>
     <label class="sw b"><input type="checkbox" id="cons"><span class="track"><span class="knob"></span></span></label></div>
   <div class="row"><span>Decreased or no spontaneous activity</span>
@@ -97,18 +100,20 @@
   <div class="row"><span>Seizure</span>
     <label class="sw b"><input type="checkbox" id="seiz"><span class="track"><span class="knob"></span></span></label></div>
 
-  <div class="section aeeg">&nbsp;&nbsp;&nbsp;aEEG BACKGROUND</div>
-  <div class="hint">Select the aEEG background pattern.</div>
-  <label class="rrow"><input type="radio" name="aeeg" value="na" checked>
-    <span>Not recorded / not available<div class="tag">Result falls back to Criteria B alone</div></span></label>
-  <label class="rrow"><input type="radio" name="aeeg" value="cnv">
-    <span>Continuous normal voltage (CNV)<div class="tag">Normal background</div></span></label>
-  <label class="rrow"><input type="radio" name="aeeg" value="dnv">
-    <span>Discontinuous normal voltage (DNV)<div class="tag">Depressed background</div></span></label>
-  <label class="rrow"><input type="radio" name="aeeg" value="bs">
-    <span>Burst suppression (BS)<div class="tag">Depressed background</div></span></label>
-  <label class="rrow"><input type="radio" name="aeeg" value="lv">
-    <span>Low voltage<div class="tag">Depressed background</div></span></label>
+  <div class="section aeeg" id="aeegHeader" onclick="toggleAeeg()"><span id="aeegCaret">&#9656;</span>&nbsp;(C) aEEG BACKGROUND (optional)</div>
+  <div id="aeegBody" class="collapsed">
+    <div class="hint">Select the aEEG background pattern.</div>
+    <label class="rrow"><input type="radio" name="aeeg" value="na" checked>
+      <span>Not recorded / not available<div class="tag">Result falls back to (B) alone</div></span></label>
+    <label class="rrow"><input type="radio" name="aeeg" value="cnv">
+      <span>Continuous normal voltage (CNV)<div class="tag">Normal background</div></span></label>
+    <label class="rrow"><input type="radio" name="aeeg" value="dnv">
+      <span>Discontinuous normal voltage (DNV)<div class="tag">Depressed background</div></span></label>
+    <label class="rrow"><input type="radio" name="aeeg" value="bs">
+      <span>Burst suppression (BS)<div class="tag">Depressed background</div></span></label>
+    <label class="rrow"><input type="radio" name="aeeg" value="lv">
+      <span>Low voltage<div class="tag">Depressed background</div></span></label>
+  </div>
 
   <button class="submit" onclick="submit()">Submit</button>
   <button class="patterns-btn" onclick="openPatterns()">View aEEG patterns</button>
@@ -290,6 +295,11 @@
   }
 
   function openPatterns(){ document.getElementById('patternsOverlay').classList.add('show'); }
+
+  function toggleAeeg(){
+    document.getElementById('aeegBody').classList.toggle('collapsed');
+    document.getElementById('aeegCaret').classList.toggle('open');
+  }
 
   // Show the disclaimer on launch, like the app does.
   document.getElementById('disclaimerMsg').textContent = disclaimerText;
